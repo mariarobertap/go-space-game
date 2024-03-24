@@ -7,7 +7,7 @@ import (
 	"github.com/hajimehoshi/ebiten/v2"
 )
 
-type Star struct {
+type Planet struct {
 	position      Vector
 	rotation      float64
 	movement      Vector
@@ -15,23 +15,23 @@ type Star struct {
 	sprite        *ebiten.Image
 }
 
-func NewStar() *Star {
+func NewPlanet() *Planet {
 	pos := Vector{
 		X: rand.Float64() * screenWidth, // Random X position within the window width
-		Y: -100,                         // Set Y position above the window
+		Y: -500,                         // Set Y position above the window
 	}
 
 	// Set the velocity of the meteors to move downwards.
-	velocity := float64(6)
+	velocity := float64(2)
 
 	movement := Vector{
 		X: 0,        // No horizontal movement
 		Y: velocity, // Move downwards
 	}
 
-	sprite := assets.StarsSprites[rand.Intn(len(assets.StarsSprites))]
+	sprite := assets.PlanetsSprites[rand.Intn(len(assets.PlanetsSprites))]
 
-	m := &Star{
+	m := &Planet{
 		position: pos,
 		movement: movement,
 		sprite:   sprite,
@@ -39,13 +39,13 @@ func NewStar() *Star {
 	return m
 }
 
-func (m *Star) Update() {
+func (m *Planet) Update() {
 	m.position.X += m.movement.X
 	m.position.Y += m.movement.Y
 	m.rotation += m.rotationSpeed
 }
 
-func (m *Star) Draw(screen *ebiten.Image) {
+func (m *Planet) Draw(screen *ebiten.Image) {
 	op := &ebiten.DrawImageOptions{}
 	op.GeoM.Translate(m.position.X, m.position.Y)
 	screen.DrawImage(m.sprite, op)

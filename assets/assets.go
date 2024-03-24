@@ -20,6 +20,7 @@ var MeteorSprites = mustLoadImages("meteors/*.png")
 var LaserSprite = mustLoadImage("laser.png")
 var GopherPlayer = mustLoadImage("go_player.png")
 var StarsSprites = mustLoadImages("stars/*.png")
+var PlanetsSprites = mustLoadImages("planets/*.png")
 
 var ScoreFont = mustLoadFont("font.ttf")
 var FontUi = mustLoadFont("fontui.ttf")

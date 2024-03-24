@@ -9,10 +9,7 @@ import (
 )
 
 type Menu struct {
-	PrimaryAction   *Action
-	SecondaryAction *Action
-	CreditsAction   *Action
-	readyToPlay     bool
+	readyToPlay bool
 }
 
 const (
@@ -32,9 +29,7 @@ func (m *Menu) Draw(screen *ebiten.Image) {
 	text.Draw(screen, "GO: Space War", assets.ScoreFont, 200, 300, color.White)
 
 	op := &ebiten.DrawImageOptions{}
-
 	op.GeoM.Translate(315, 150)
-
 	screen.DrawImage(assets.GopherPlayer, op)
 
 	text.Draw(screen, "Press ENTER to start..", assets.FontUi, 100, 400, color.White)

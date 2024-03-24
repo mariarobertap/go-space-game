@@ -20,14 +20,14 @@ type Meteor struct {
 	sprite        *ebiten.Image
 }
 
-func NewMeteor(baseVelocity float64) *Meteor {
+func NewMeteor() *Meteor {
 	pos := Vector{
 		X: rand.Float64() * screenWidth, // Random X position within the window width
 		Y: -100,                         // Set Y position above the window
 	}
 
 	// Set the velocity of the meteors to move downwards.
-	velocity := baseVelocity + rand.Float64()*10
+	velocity := (rand.Float64() * 13)
 
 	movement := Vector{
 		X: 0,        // No horizontal movement
@@ -57,6 +57,7 @@ func (m *Meteor) Draw(screen *ebiten.Image) {
 	halfH := float64(bounds.Dy()) / 2
 
 	op := &ebiten.DrawImageOptions{}
+
 	op.GeoM.Translate(-halfW, -halfH)
 	op.GeoM.Rotate(m.rotation)
 	op.GeoM.Translate(halfW, halfH)

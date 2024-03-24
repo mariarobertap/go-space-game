@@ -14,36 +14,35 @@ import (
 var bestScore = 0
 
 const (
-	screenWidth  = 800
-	screenHeight = 600
-
+	screenWidth     = 800
+	screenHeight    = 600
 	meteorSpawnTime = 1 * time.Second
-	starSpawnTime   = 2 * time.Second
-
-	baseMeteorVelocity  = 0.25
-	meteorSpeedUpAmount = 0.1
-	meteorSpeedUpTime   = 5 * time.Second
+	starSpawnTime   = (1 * time.Second) / 2
+	planetSpawnTime = 7 * time.Second
 )
 
 type Game struct {
-	player           *Player
 	meteorSpawnTimer *Timer
+	planetSpawnTime  *Timer
 	starSpawnTimer   *Timer
 	menu             *ui.Menu
-	meteors          []*Meteor
-	stars            []*Star
-	bullets          []*Bullet
-	isStarted        bool
-	score            int
 
-	baseVelocity float64
+	player  *Player
+	meteors []*Meteor
+	stars   []*Star
+	planets []*Planet
+	bullets []*Bullet
+
+	isStarted bool
+	score     int
 }
 
 func NewGame() *Game {
 	g := &Game{
 		meteorSpawnTimer: NewTimer(meteorSpawnTime),
 		starSpawnTimer:   NewTimer(starSpawnTime),
-		baseVelocity:     baseMeteorVelocity}
+		planetSpawnTime:  NewTimer(planetSpawnTime),
+	}
 
 	g.player = NewPlayer(g)
 	g.menu = ui.NewMenu()
@@ -53,39 +52,54 @@ func NewGame() *Game {
 
 func (g *Game) Update() error {
 
+	g.starSpawnTimer.Update()
+	if g.starSpawnTimer.IsReady() {
+		g.starSpawnTimer.Reset()
+
+		s := NewStar()
+		g.stars = append(g.stars, s)
+	}
+
+	for _, m := range g.stars {
+		m.Update()
+	}
+
 	if !g.isStarted {
 
 		g.menu.Update()
 
 		if g.menu.IsReady() {
+			g.planets = nil
 			g.isStarted = true
 		}
+
+		g.planetSpawnTime.Update()
+		if g.planetSpawnTime.IsReady() {
+			g.planetSpawnTime.Reset()
+
+			s := NewPlanet()
+			g.planets = append(g.planets, s)
+		}
+
+		for _, m := range g.planets {
+			m.Update()
+		}
+
+		return nil
 
 	}
 
 	g.player.Update()
 
-	g.starSpawnTimer.Update()
-	if g.starSpawnTimer.IsReady() {
-		g.starSpawnTimer.Reset()
-
-		s := NewStar(0.1)
-		g.stars = append(g.stars, s)
-	}
-
 	g.meteorSpawnTimer.Update()
 	if g.meteorSpawnTimer.IsReady() {
 		g.meteorSpawnTimer.Reset()
 
-		m := NewMeteor(g.baseVelocity)
+		m := NewMeteor()
 		g.meteors = append(g.meteors, m)
 	}
 
 	for _, m := range g.meteors {
-		m.Update()
-	}
-
-	for _, m := range g.stars {
 		m.Update()
 	}
 
@@ -97,7 +111,9 @@ func (g *Game) Update() error {
 	for i, m := range g.meteors {
 		for j, b := range g.bullets {
 			if m.Collider().Intersects(b.Collider()) {
+				//remove meteor by index
 				g.meteors = append(g.meteors[:i], g.meteors[i+1:]...)
+				//remove bullet by index
 				g.bullets = append(g.bullets[:j], g.bullets[j+1:]...)
 				g.score++
 
@@ -118,13 +134,15 @@ func (g *Game) Update() error {
 
 func (g *Game) Draw(screen *ebiten.Image) {
 
-	//g.background.Draw(screen)
-
 	for _, b := range g.stars {
 		b.Draw(screen)
 	}
 
 	if !g.isStarted {
+		for _, b := range g.planets {
+			b.Draw(screen)
+		}
+
 		g.menu.Draw(screen)
 		return
 	}
@@ -141,7 +159,6 @@ func (g *Game) Draw(screen *ebiten.Image) {
 
 	scoreSprite := &ebiten.DrawImageOptions{}
 
-	//scoreSprite.GeoM.Scale(-1, -1)
 	scoreSprite.GeoM.Translate(60, 450)
 
 	text.Draw(screen, "________________________________", assets.FontUi, 0, 520, color.White)
@@ -159,8 +176,6 @@ func (g *Game) Reset() {
 	g.bullets = nil
 	g.meteorSpawnTimer.Reset()
 	g.starSpawnTimer.Reset()
-
-	g.baseVelocity = baseMeteorVelocity
 
 	if g.score >= bestScore {
 		bestScore = g.score

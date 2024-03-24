@@ -1,7 +1,7 @@
 package game
 
 import (
-	"math"
+	"fmt"
 	"time"
 
 	"github.com/hajimehoshi/ebiten/v2"
@@ -12,8 +12,6 @@ import (
 
 const (
 	shootCooldown     = time.Millisecond * 500
-	rotationPerSecond = math.Pi
-
 	bulletSpawnOffset = 50.0
 )
 
@@ -32,11 +30,11 @@ func NewPlayer(game *Game) *Player {
 
 	bounds := sprite.Bounds()
 	halfW := float64(bounds.Dx()) / 2
-	halfH := float64(bounds.Dy())
 
+	fmt.Println(screenHeight)
 	pos := Vector{
-		X: screenWidth/2 - halfW,
-		Y: screenHeight - (halfH * 2.5),
+		X: (screenWidth / 2) - halfW,
+		Y: (screenHeight) - 170,
 	}
 
 	return &Player{
@@ -48,7 +46,7 @@ func NewPlayer(game *Game) *Player {
 }
 
 func (p *Player) Update() {
-	speed := 7.0
+	speed := 6.0
 
 	if ebiten.IsKeyPressed(ebiten.KeyLeft) {
 		p.position.X -= speed
@@ -67,11 +65,11 @@ func (p *Player) Update() {
 		halfH := float64(bounds.Dy()) / 2
 
 		spawnPos := Vector{
-			p.position.X + halfW + math.Sin(p.rotation)*bulletSpawnOffset,
-			p.position.Y + halfH + math.Cos(p.rotation)*-bulletSpawnOffset,
+			p.position.X + halfW,
+			p.position.Y - halfH/2,
 		}
 
-		bullet := NewBullet(spawnPos, p.rotation)
+		bullet := NewBullet(spawnPos)
 		p.game.AddBullet(bullet)
 	}
 }
@@ -79,9 +77,7 @@ func (p *Player) Update() {
 func (p *Player) Draw(screen *ebiten.Image) {
 
 	op := &ebiten.DrawImageOptions{}
-
 	op.GeoM.Translate(p.position.X, p.position.Y)
-
 	screen.DrawImage(p.sprite, op)
 }
 

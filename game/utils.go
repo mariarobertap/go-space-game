@@ -7,6 +7,11 @@ type Rect struct {
 	Height float64
 }
 
+type Vector struct {
+	X float64
+	Y float64
+}
+
 func NewRect(x, y, width, height float64) Rect {
 	return Rect{
 		X:      x,
