@@ -3,7 +3,6 @@ package game
 import (
 	"fmt"
 	"game/src/assets"
-	"game/src/ui"
 	"image/color"
 	"time"
 
@@ -23,14 +22,11 @@ const (
 
 type Game struct {
 	meteorSpawnTimer *Timer
-	planetSpawnTime  *Timer
 	starSpawnTimer   *Timer
-	menu             *ui.Menu
 
 	player  *Player
 	meteors []*Meteor
 	stars   []*Star
-	planets []*Planet
 	bullets []*Bullet
 
 	isStarted bool
@@ -41,11 +37,9 @@ func NewGame() *Game {
 	g := &Game{
 		meteorSpawnTimer: NewTimer(meteorSpawnTime),
 		starSpawnTimer:   NewTimer(starSpawnTime),
-		planetSpawnTime:  NewTimer(planetSpawnTime),
 	}
 
 	g.player = NewPlayer(g)
-	g.menu = ui.NewMenu()
 
 	return g
 }
@@ -62,31 +56,6 @@ func (g *Game) Update() error {
 
 	for _, m := range g.stars {
 		m.Update()
-	}
-
-	if !g.isStarted {
-
-		g.menu.Update()
-
-		if g.menu.IsReady() {
-			g.planets = nil
-			g.isStarted = true
-		}
-
-		g.planetSpawnTime.Update()
-		if g.planetSpawnTime.IsReady() {
-			g.planetSpawnTime.Reset()
-
-			s := NewPlanet()
-			g.planets = append(g.planets, s)
-		}
-
-		for _, m := range g.planets {
-			m.Update()
-		}
-
-		return nil
-
 	}
 
 	g.player.Update()
@@ -136,15 +105,6 @@ func (g *Game) Draw(screen *ebiten.Image) {
 
 	for _, b := range g.stars {
 		b.Draw(screen)
-	}
-
-	if !g.isStarted {
-		for _, b := range g.planets {
-			b.Draw(screen)
-		}
-
-		g.menu.Draw(screen)
-		return
 	}
 
 	g.player.Draw(screen)

@@ -16,12 +16,10 @@ const (
 )
 
 type Player struct {
-	game *Game
-
-	position Vector
-	rotation float64
-	sprite   *ebiten.Image
-
+	game          *Game
+	position      Vector
+	rotation      float64
+	sprite        *ebiten.Image
 	shootCooldown *Timer
 }
 

@@ -21,17 +21,17 @@ func NewRect(x, y, width, height float64) Rect {
 	}
 }
 
-func (r Rect) MaxX() float64 {
+func (r Rect) Intersects(other Rect) bool {
+	return r.X <= other.maxX() &&
+		other.X <= r.maxX() &&
+		r.Y <= other.maxY() &&
+		other.Y <= r.maxY()
+}
+
+func (r Rect) maxX() float64 {
 	return r.X + r.Width
 }
 
-func (r Rect) MaxY() float64 {
+func (r Rect) maxY() float64 {
 	return r.Y + r.Height
-}
-
-func (r Rect) Intersects(other Rect) bool {
-	return r.X <= other.MaxX() &&
-		other.X <= r.MaxX() &&
-		r.Y <= other.MaxY() &&
-		other.Y <= r.MaxY()
 }

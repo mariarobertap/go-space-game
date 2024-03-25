@@ -17,16 +17,15 @@ type Star struct {
 
 func NewStar() *Star {
 	pos := Vector{
-		X: rand.Float64() * screenWidth, // Random X position within the window width
-		Y: -100,                         // Set Y position above the window
+		X: rand.Float64() * screenWidth,
+		Y: -100,
 	}
 
-	// Set the velocity of the meteors to move downwards.
 	velocity := float64(6)
 
 	movement := Vector{
-		X: 0,        // No horizontal movement
-		Y: velocity, // Move downwards
+		X: 0,
+		Y: velocity,
 	}
 
 	sprite := assets.StarsSprites[rand.Intn(len(assets.StarsSprites))]
