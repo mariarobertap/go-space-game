@@ -1,7 +1,6 @@
 package game
 
 import (
-	"fmt"
 	"time"
 
 	"github.com/hajimehoshi/ebiten/v2"
@@ -29,7 +28,6 @@ func NewPlayer(game *Game) *Player {
 	bounds := sprite.Bounds()
 	halfW := float64(bounds.Dx()) / 2
 
-	fmt.Println(screenHeight)
 	pos := Vector{
 		X: (screenWidth / 2) - halfW,
 		Y: (screenHeight) - 170,
