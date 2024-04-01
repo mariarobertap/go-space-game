@@ -18,7 +18,7 @@ jobs:
       - uses: actions/setup-go@v2
         with:
           go-version: "^1.21"
-      - run: go build -o web_assembly/game.wasm
+      - run: go build -o web/game.wasm
         env:
           GOOS: js
           GOARCH: wasm
