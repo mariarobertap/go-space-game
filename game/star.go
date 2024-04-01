@@ -1,7 +1,7 @@
 package game
 
 import (
-	"game/src/assets"
+	"game/assets"
 	"math/rand"
 
 	"github.com/hajimehoshi/ebiten/v2"

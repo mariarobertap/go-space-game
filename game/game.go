@@ -2,7 +2,7 @@ package game
 
 import (
 	"fmt"
-	"game/src/assets"
+	"game/assets"
 	"image/color"
 	"time"
 

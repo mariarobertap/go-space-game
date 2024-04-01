@@ -1,7 +1,7 @@
 package game
 
 import (
-	"game/src/assets"
+	"game/assets"
 	"math/rand"
 
 	"github.com/hajimehoshi/ebiten/v2"
@@ -21,11 +21,10 @@ type Meteor struct {
 
 func NewMeteor() *Meteor {
 	pos := Vector{
-		X: rand.Float64() * screenWidth, // Random X position within the window width
-		Y: -100,                         // Set Y position above the window
+		X: rand.Float64() * screenWidth,
+		Y: -100,
 	}
 
-	// Set the velocity of the meteors to move downwards.
 	speed := (rand.Float64() * 13)
 
 	sprite := assets.MeteorSprites[rand.Intn(len(assets.MeteorSprites))]
