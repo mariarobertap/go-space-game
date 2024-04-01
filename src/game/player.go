@@ -1,6 +1,7 @@
 package game
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/hajimehoshi/ebiten/v2"
@@ -10,7 +11,7 @@ import (
 )
 
 const (
-	shootCooldown     = time.Millisecond * 500
+	shootCooldown     = time.Millisecond * 200
 	bulletSpawnOffset = 50.0
 )
 
@@ -33,11 +34,13 @@ func NewPlayer(game *Game) *Player {
 		Y: (screenHeight) - 170,
 	}
 
+	fmt.Println(shootCooldown)
+
 	return &Player{
 		game:          game,
 		position:      pos,
 		sprite:        sprite,
-		shootCooldown: NewTimer(shootCooldown),
+		shootCooldown: NewTimer(12),
 	}
 }
 
@@ -65,8 +68,8 @@ func (p *Player) Update() {
 			p.position.Y - halfH/2,
 		}
 
-		bullet := NewBullet(spawnPos)
-		p.game.AddBullet(bullet)
+		laser := NewLaser(spawnPos)
+		p.game.AddLaser(laser)
 	}
 }
 

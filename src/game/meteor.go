@@ -14,8 +14,7 @@ const (
 
 type Meteor struct {
 	position      Vector
-	rotation      float64
-	movement      Vector
+	speed         float64
 	rotationSpeed float64
 	sprite        *ebiten.Image
 }
@@ -27,18 +26,13 @@ func NewMeteor() *Meteor {
 	}
 
 	// Set the velocity of the meteors to move downwards.
-	velocity := (rand.Float64() * 13)
-
-	movement := Vector{
-		X: 0,        // No horizontal movement
-		Y: velocity, // Move downwards
-	}
+	speed := (rand.Float64() * 13)
 
 	sprite := assets.MeteorSprites[rand.Intn(len(assets.MeteorSprites))]
 
 	m := &Meteor{
 		position:      pos,
-		movement:      movement,
+		speed:         speed,
 		rotationSpeed: rotationSpeedMin + rand.Float64()*(rotationSpeedMax-rotationSpeedMin),
 		sprite:        sprite,
 	}
@@ -46,9 +40,8 @@ func NewMeteor() *Meteor {
 }
 
 func (m *Meteor) Update() {
-	m.position.X += m.movement.X
-	m.position.Y += m.movement.Y
-	m.rotation += m.rotationSpeed
+
+	m.position.Y += m.speed
 }
 
 func (m *Meteor) Draw(screen *ebiten.Image) {

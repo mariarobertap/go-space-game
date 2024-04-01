@@ -1,9 +1,7 @@
 package game
 
 import (
-	"time"
-
-	"github.com/hajimehoshi/ebiten/v2"
+	"fmt"
 )
 
 type Timer struct {
@@ -11,11 +9,15 @@ type Timer struct {
 	targetTicks  int
 }
 
-func NewTimer(d time.Duration) *Timer {
+func NewTimer(targetTicks int) *Timer {
 	return &Timer{
 		currentTicks: 0,
-		targetTicks:  int(d.Milliseconds()) * ebiten.TPS() / 2500,
+		targetTicks:  targetTicks,
 	}
+}
+
+func (t *Timer) GetTargetTicks() {
+	fmt.Println(t.targetTicks)
 }
 
 func (t *Timer) Update() {

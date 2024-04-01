@@ -1,15 +1,15 @@
 package game
 
+type Vector struct {
+	X float64
+	Y float64
+}
+
 type Rect struct {
 	X      float64
 	Y      float64
 	Width  float64
 	Height float64
-}
-
-type Vector struct {
-	X float64
-	Y float64
 }
 
 func NewRect(x, y, width, height float64) Rect {

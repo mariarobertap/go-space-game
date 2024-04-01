@@ -27,7 +27,7 @@ type Game struct {
 	player  *Player
 	meteors []*Meteor
 	stars   []*Star
-	bullets []*Bullet
+	lasers  []*Laser
 
 	isStarted bool
 	score     int
@@ -35,8 +35,8 @@ type Game struct {
 
 func NewGame() *Game {
 	g := &Game{
-		meteorSpawnTimer: NewTimer(meteorSpawnTime),
-		starSpawnTimer:   NewTimer(starSpawnTime),
+		meteorSpawnTimer: NewTimer(24),
+		starSpawnTimer:   NewTimer(10),
 	}
 
 	g.player = NewPlayer(g)
@@ -72,25 +72,21 @@ func (g *Game) Update() error {
 		m.Update()
 	}
 
-	for _, b := range g.bullets {
+	for _, b := range g.lasers {
 		b.Update()
 	}
 
-	// Check for meteor/bullet collisions
 	for i, m := range g.meteors {
-		for j, b := range g.bullets {
+		for j, b := range g.lasers {
 			if m.Collider().Intersects(b.Collider()) {
-				//remove meteor by index
 				g.meteors = append(g.meteors[:i], g.meteors[i+1:]...)
-				//remove bullet by index
-				g.bullets = append(g.bullets[:j], g.bullets[j+1:]...)
+				g.lasers = append(g.lasers[:j], g.lasers[j+1:]...)
 				g.score++
 
 			}
 		}
 	}
 
-	// Check for meteor/player collisions
 	for _, m := range g.meteors {
 		if m.Collider().Intersects(g.player.Collider()) {
 			g.Reset()
@@ -113,7 +109,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 		m.Draw(screen)
 	}
 
-	for _, b := range g.bullets {
+	for _, b := range g.lasers {
 		b.Draw(screen)
 	}
 
@@ -126,14 +122,14 @@ func (g *Game) Draw(screen *ebiten.Image) {
 
 }
 
-func (g *Game) AddBullet(b *Bullet) {
-	g.bullets = append(g.bullets, b)
+func (g *Game) AddLaser(l *Laser) {
+	g.lasers = append(g.lasers, l)
 }
 
 func (g *Game) Reset() {
 	g.player = NewPlayer(g)
 	g.meteors = nil
-	g.bullets = nil
+	g.lasers = nil
 	g.meteorSpawnTimer.Reset()
 	g.starSpawnTimer.Reset()
 
