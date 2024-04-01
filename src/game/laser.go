@@ -6,16 +6,12 @@ import (
 	"github.com/hajimehoshi/ebiten/v2"
 )
 
-const (
-	bulletSpeedPerSecond = 400.0
-)
-
-type Bullet struct {
+type Laser struct {
 	position Vector
 	sprite   *ebiten.Image
 }
 
-func NewBullet(pos Vector) *Bullet {
+func NewLaser(pos Vector) *Laser {
 	sprite := assets.LaserSprite
 
 	bounds := sprite.Bounds()
@@ -25,7 +21,7 @@ func NewBullet(pos Vector) *Bullet {
 	pos.X -= halfW
 	pos.Y -= halfH
 
-	b := &Bullet{
+	b := &Laser{
 		position: pos,
 		sprite:   sprite,
 	}
@@ -33,25 +29,25 @@ func NewBullet(pos Vector) *Bullet {
 	return b
 }
 
-func (b *Bullet) Update() {
-	speed := bulletSpeedPerSecond / float64(ebiten.TPS())
+func (l *Laser) Update() {
+	speed := 7.0
 
-	b.position.Y += -speed
+	l.position.Y += -speed
 }
 
-func (b *Bullet) Draw(screen *ebiten.Image) {
+func (l *Laser) Draw(screen *ebiten.Image) {
 	op := &ebiten.DrawImageOptions{}
-	op.GeoM.Translate(b.position.X, b.position.Y)
+	op.GeoM.Translate(l.position.X, l.position.Y)
 
-	screen.DrawImage(b.sprite, op)
+	screen.DrawImage(l.sprite, op)
 }
 
-func (b *Bullet) Collider() Rect {
-	bounds := b.sprite.Bounds()
+func (l *Laser) Collider() Rect {
+	bounds := l.sprite.Bounds()
 
 	return NewRect(
-		b.position.X,
-		b.position.Y,
+		l.position.X,
+		l.position.Y,
 		float64(bounds.Dx()),
 		float64(bounds.Dy()),
 	)

@@ -69,8 +69,8 @@ func (p *Player) Update() {
 			p.position.Y - halfH/2,
 		}
 
-		bullet := NewBullet(spawnPos)
-		p.game.AddBullet(bullet)
+		bullet := NewLaser(spawnPos)
+		p.game.AddLaser(bullet)
 	}
 }
 

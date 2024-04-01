@@ -17,16 +17,15 @@ type Planet struct {
 
 func NewPlanet() *Planet {
 	pos := Vector{
-		X: rand.Float64() * screenWidth, // Random X position within the window width
-		Y: -500,                         // Set Y position above the window
+		X: rand.Float64() * screenWidth,
+		Y: -500,
 	}
 
-	// Set the velocity of the meteors to move downwards.
 	velocity := float64(2)
 
 	movement := Vector{
-		X: 0,        // No horizontal movement
-		Y: velocity, // Move downwards
+		X: 0,
+		Y: velocity,
 	}
 
 	sprite := assets.PlanetsSprites[rand.Intn(len(assets.PlanetsSprites))]
