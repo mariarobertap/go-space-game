@@ -15,6 +15,8 @@ import (
 var assets embed.FS
 
 var PlayerSprite = mustLoadImage("player.png")
+var PowerUpSprite = mustLoadImage("power_up.png")
+var SuperPowerSprite = mustLoadImage("superpower.png")
 
 var MeteorSprites = mustLoadImages("meteors/*.png")
 var LaserSprite = mustLoadImage("laser.png")

@@ -14,24 +14,30 @@ import (
 var bestScore = 0
 
 const (
-	screenWidth     = 800
-	screenHeight    = 600
-	meteorSpawnTime = 1 * time.Second
-	starSpawnTime   = (1 * time.Second) / 2
-	planetSpawnTime = 7 * time.Second
+	screenWidth      = 800
+	screenHeight     = 600
+	meteorSpawnTime  = 1 * time.Second
+	starSpawnTime    = (1 * time.Second) / 2
+	planetSpawnTime  = 7 * time.Second
+	powerUpSpawnTime = 25 * time.Second
+	superPowerTime   = 15 * time.Second
 )
 
 type Game struct {
-	meteorSpawnTimer *Timer
-	planetSpawnTime  *Timer
-	starSpawnTimer   *Timer
-	menu             *ui.Menu
+	meteorSpawnTimer  *Timer
+	planetSpawnTime   *Timer
+	starSpawnTimer    *Timer
+	powerUpSpawnTimer *Timer
+	superPowerTimer   *Timer
+	menu              *ui.Menu
 
-	player  *Player
-	meteors []*Meteor
-	stars   []*Star
-	planets []*Planet
-	lasers  []*Laser
+	player           *Player
+	meteors          []*Meteor
+	stars            []*Star
+	planets          []*Planet
+	lasers           []*Laser
+	powerUps         []*PowerUp
+	superPowerActive bool
 
 	isStarted bool
 	score     int
@@ -39,9 +45,12 @@ type Game struct {
 
 func NewGame() *Game {
 	g := &Game{
-		meteorSpawnTimer: NewTimer(meteorSpawnTime),
-		starSpawnTimer:   NewTimer(starSpawnTime),
-		planetSpawnTime:  NewTimer(planetSpawnTime),
+		meteorSpawnTimer:  NewTimer(meteorSpawnTime),
+		starSpawnTimer:    NewTimer(starSpawnTime),
+		planetSpawnTime:   NewTimer(planetSpawnTime),
+		powerUpSpawnTimer: NewTimer(powerUpSpawnTime),
+		superPowerTimer:   NewTimer(superPowerTime),
+		superPowerActive:  false,
 	}
 
 	g.player = NewPlayer(g)
@@ -99,6 +108,26 @@ func (g *Game) Update() error {
 		g.meteors = append(g.meteors, m)
 	}
 
+	g.powerUpSpawnTimer.Update()
+	if g.powerUpSpawnTimer.IsReady() {
+		g.powerUpSpawnTimer.Reset()
+
+		p := NewPowerUp()
+		g.powerUps = append(g.powerUps, p)
+	}
+
+	if g.superPowerActive {
+		g.superPowerTimer.Update()
+		if g.superPowerTimer.IsReady() {
+			g.superPowerTimer.Reset()
+			g.superPowerActive = false
+		}
+	}
+
+	for _, p := range g.powerUps {
+		p.Update()
+	}
+
 	for _, m := range g.meteors {
 		m.Update()
 	}
@@ -109,7 +138,7 @@ func (g *Game) Update() error {
 
 	for i, m := range g.meteors {
 		for j, b := range g.lasers {
-			if m.Collider().Intersects(b.Collider()) {
+			if m.Collider().Intersects(b.Collider()) && (i >= 0 && i < len(g.meteors)) {
 				g.meteors = append(g.meteors[:i], g.meteors[i+1:]...)
 				g.lasers = append(g.lasers[:j], g.lasers[j+1:]...)
 				g.score++
@@ -122,6 +151,16 @@ func (g *Game) Update() error {
 	for _, m := range g.meteors {
 		if m.Collider().Intersects(g.player.Collider()) {
 			g.Reset()
+			break
+		}
+	}
+
+	// Check for power-up/player collisions
+	for i, p := range g.powerUps {
+		if p.Collider().Intersects(g.player.Collider()) {
+			g.powerUps = append(g.powerUps[:i], g.powerUps[i+1:]...)
+			g.superPowerActive = true
+			g.superPowerTimer.Reset()
 			break
 		}
 	}
@@ -154,6 +193,10 @@ func (g *Game) Draw(screen *ebiten.Image) {
 		b.Draw(screen)
 	}
 
+	for _, p := range g.powerUps {
+		p.Draw(screen)
+	}
+
 	scoreSprite := &ebiten.DrawImageOptions{}
 
 	scoreSprite.GeoM.Translate(60, 450)
@@ -171,8 +214,10 @@ func (g *Game) Reset() {
 	g.player = NewPlayer(g)
 	g.meteors = nil
 	g.lasers = nil
+	g.powerUps = nil
 	g.meteorSpawnTimer.Reset()
 	g.starSpawnTimer.Reset()
+	g.powerUpSpawnTimer.Reset()
 
 	if g.score >= bestScore {
 		bestScore = g.score
@@ -180,6 +225,7 @@ func (g *Game) Reset() {
 	}
 
 	g.score = 0
+	g.superPowerActive = false
 }
 
 func (g *Game) Layout(outsideWidth, outsideHeight int) (int, int) {
