@@ -69,8 +69,24 @@ func (p *Player) Update() {
 			p.position.Y - halfH/2,
 		}
 
-		bullet := NewLaser(spawnPos)
+		bullet := NewLaser(p.game, spawnPos)
 		p.game.AddLaser(bullet)
+
+		if p.game.superPowerActive {
+			spawnLeftPos := Vector{
+				p.position.X - halfW,
+				p.position.Y,
+			}
+			spawnRightPos := Vector{
+				p.position.X + halfW*3,
+				p.position.Y,
+			}
+
+			bulletleft := NewLaser(p.game, spawnLeftPos)
+			bulletRight := NewLaser(p.game, spawnRightPos)
+			p.game.AddLaser(bulletleft)
+			p.game.AddLaser(bulletRight)
+		}
 	}
 }
 
